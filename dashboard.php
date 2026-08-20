@@ -2,30 +2,45 @@
 include 'auth.php';
 include 'connexion.php';
 
-$res1 = $conn->query("SELECT COUNT(*) AS total FROM maison");
-$total_maisons = $res1->fetch_assoc()['total'];
+// Récupération du rôle
+$role = $_SESSION['role'] ?? 'Caissier';
 
-$res2 = $conn->query("SELECT COUNT(*) AS total FROM appartement");
-$total_appartements = $res2->fetch_assoc()['total'];
+// Initialisation des variables
+$total_maisons = 0;
+$total_appartements = 0;
+$total_locataires = 0;
+$total_paiement = 0;
+$total_depense = 0;
+$benefice = 0;
 
-$res3 = $conn->query("SELECT COUNT(*) AS total FROM locataire");
-$total_locataires = $res3->fetch_assoc()['total'];
+// Requêtes pour Administrateur et Gestionnaire
+if ($role === 'Administrateur' || $role === 'Gestionnaire') {
+    $res1 = $conn->query("SELECT COUNT(*) AS total FROM maison");
+    if ($res1) { $total_maisons = $res1->fetch_assoc()['total']; }
 
-$res4 = $conn->query("
-SELECT SUM(montant) AS total
-FROM paiement
-");
+    $res2 = $conn->query("SELECT COUNT(*) AS total FROM appartement");
+    if ($res2) { $total_appartements = $res2->fetch_assoc()['total']; }
 
-$total_paiement = $res4->fetch_assoc()['total'] ?? 0;
+    $res3 = $conn->query("SELECT COUNT(*) AS total FROM locataire");
+    if ($res3) { $total_locataires = $res3->fetch_assoc()['total']; }
+}
 
-$res5 = $conn->query("
-SELECT SUM(montant) AS total
-FROM depense
-");
+// Requêtes pour Administrateur et Caissier
+if ($role === 'Administrateur' || $role === 'Caissier') {
+    $res4 = $conn->query("
+    SELECT SUM(montant) AS total
+    FROM paiement
+    ");
+    if ($res4) { $total_paiement = $res4->fetch_assoc()['total'] ?? 0; }
 
-$total_depense = $res5->fetch_assoc()['total'] ?? 0;
+    $res5 = $conn->query("
+    SELECT SUM(montant) AS total
+    FROM depense
+    ");
+    if ($res5) { $total_depense = $res5->fetch_assoc()['total'] ?? 0; }
 
-$benefice = $total_paiement - $total_depense;
+    $benefice = $total_paiement - $total_depense;
+}
 ?>
 
 <!DOCTYPE html>
@@ -274,6 +289,7 @@ body::before{
 📊 Dashboard
 </a>
 
+<?php if ($role === 'Administrateur' || $role === 'Gestionnaire'): ?>
 <a href="maison.php">
 🏠 Maisons
 </a>
@@ -285,7 +301,9 @@ body::before{
 <a href="locataire.php">
 👤 Locataires
 </a>
+<?php endif; ?>
 
+<?php if ($role === 'Administrateur' || $role === 'Caissier'): ?>
 <a href="paiement.php">
 💰 Paiements
 </a>
@@ -297,13 +315,19 @@ body::before{
 <a href="rapport.php">
 📄 Rapports
 </a>
+<?php endif; ?>
+
+<?php if ($role === 'Administrateur' || $role === 'Gestionnaire'): ?>
 <a href="contrat.php">
 📄 contrat
 </a>
+<?php endif; ?>
 
+<?php if ($role === 'Administrateur'): ?>
 <a href="parametre.php">
 ⚙ Paramètres
 </a>
+<?php endif; ?>
 
 <a href="logout.php">
 🚪 Déconnexion
@@ -331,6 +355,7 @@ dans votre système de gestion immobilière
 
 <div class="cards">
 
+<?php if ($role === 'Administrateur' || $role === 'Gestionnaire'): ?>
 <div class="card">
 
 <h3>🏠 Maisons</h3>
@@ -360,7 +385,9 @@ dans votre système de gestion immobilière
 </p>
 
 </div>
+<?php endif; ?>
 
+<?php if ($role === 'Administrateur' || $role === 'Caissier'): ?>
 <div class="card">
 
 <h3>💰 Paiements</h3>
@@ -390,6 +417,7 @@ dans votre système de gestion immobilière
 </p>
 
 </div>
+<?php endif; ?>
 
 </div>
 

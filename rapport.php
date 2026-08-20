@@ -76,8 +76,14 @@ if($rapport){
 <style>
 
 /* ================= GENERAL ================= */
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
 body{
-    font-family:Arial;
+    font-family:Arial, sans-serif;
     padding:30px;
     color:white;
     min-height:100vh;
@@ -90,7 +96,30 @@ body{
 
 h1{
     text-align:center;
-    margin-bottom:15px;
+    margin-bottom:20px;
+}
+
+/* ================= BOUTON RETOUR ================= */
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 14px;
+    transition: 0.3s ease;
+    margin-bottom: 20px;
+}
+
+.btn-back:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateX(-4px);
 }
 
 /* ================= STATS ================= */
@@ -103,9 +132,11 @@ h1{
 
 .card{
     background:rgba(255,255,255,0.08);
+    backdrop-filter: blur(10px);
     padding:12px;
     border-radius:12px;
     text-align:center;
+    border: 1px solid rgba(255,255,255,0.1);
 }
 
 .card p{
@@ -117,39 +148,82 @@ h1{
 /* ================= FORM ================= */
 .form-box{
     background:rgba(255,255,255,0.08);
-    padding:12px;
+    backdrop-filter: blur(10px);
+    padding:15px;
     border-radius:12px;
-    margin-bottom:10px;
+    margin-bottom:15px;
+    border: 1px solid rgba(255,255,255,0.1);
 }
 
 select, button{
-    padding:8px;
+    padding:10px;
     width:100%;
-    margin-top:6px;
+    margin-top:8px;
     border:none;
     border-radius:8px;
+    font-size:14px;
+}
+
+select{
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    outline: none;
+}
+
+select option{
+    color: black;
+}
+
+form button[type="submit"]{
+    background: #4caf50;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+form button[type="submit"]:hover{
+    background: #43a047;
 }
 
 /* ================= SMALL BUTTONS ================= */
 .print-btn{
     background:#2196f3;
     color:white;
-    padding:6px 10px;
+    padding:8px 14px;
     border:none;
     border-radius:8px;
-    font-size:12px;
+    font-size:13px;
     font-weight:bold;
     cursor:pointer;
-    margin:6px 0;
+    margin:6px 4px 6px 0;
     width:auto;
+    display:inline-block;
+    transition: 0.3s;
+}
+
+.print-btn:hover{
+    filter: brightness(1.1);
+    transform: translateY(-2px);
+}
+
+.btn-close-report {
+    background: #f44336;
 }
 
 /* ================= REPORT ================= */
 .report-box{
     background:rgba(255,255,255,0.10);
-    padding:12px;
+    backdrop-filter: blur(10px);
+    padding:15px;
     border-radius:12px;
     margin-top:10px;
+    border: 1px solid rgba(255,255,255,0.15);
+}
+
+.report-box p{
+    margin-bottom: 8px;
+    font-size: 15px;
 }
 
 .ok{color:#00e676;font-weight:bold;}
@@ -157,31 +231,38 @@ select, button{
 
 /* ================= TABLE ================= */
 .table-box{
-    margin-top:10px;
+    margin-top:15px;
     background:rgba(255,255,255,0.08);
-    padding:12px;
+    backdrop-filter: blur(10px);
+    padding:15px;
     border-radius:12px;
+    border: 1px solid rgba(255,255,255,0.1);
 }
 
 table{
     width:100%;
     border-collapse:collapse;
+    margin-top: 10px;
 }
 
 th{
     background:#3f51b5;
-    padding:8px;
+    padding:10px;
 }
 
 td{
     text-align:center;
-    padding:8px;
+    padding:10px;
     border-bottom:1px solid rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.03);
 }
 
 /* ================= PRINT MODE ================= */
-body.print-stats .locataire-section{display:none;}
-body.print-locataire .cards{display:none;}
+body.print-stats .locataire-section,
+body.print-stats .btn-back{display:none !important;}
+
+body.print-locataire .cards,
+body.print-locataire .btn-back{display:none !important;}
 
 /* ================= PRINT STYLE ================= */
 @media print {
@@ -191,6 +272,7 @@ body.print-locataire .cards{display:none;}
         color:black !important;
     }
 
+    .btn-back,
     .form-box,
     .print-btn,
     button,
@@ -203,6 +285,7 @@ body.print-locataire .cards{display:none;}
     .card{
         background:white !important;
         color:black !important;
+        border: 1px solid #ccc !important;
     }
 
     th{
@@ -217,7 +300,14 @@ body.print-locataire .cards{display:none;}
 
 <body>
 
-<h1> Rapports</h1>
+<!-- ================= BOUTON RETOUR ================= -->
+<?php if(!empty($id_locataire)): ?>
+    <a href="rapport.php" class="btn-back">⬅ Voir toutes les statistiques</a>
+<?php else: ?>
+    <a href="dashboard.php" class="btn-back">⬅ Retour au tableau de bord</a>
+<?php endif; ?>
+
+<h1>📊 Rapports & Statistiques</h1>
 
 <!-- ================= STATS ================= -->
 <div class="cards">
@@ -234,27 +324,28 @@ body.print-locataire .cards{display:none;}
 </div>
 
 <!-- ================= PRINT STATS ================= -->
-<button class="print-btn" onclick="printStats()">🖨 imprimer Stats</button>
+<button class="print-btn" onclick="printStats()">🖨 Imprimer Stats</button>
 
 <!-- ================= FILTRE ================= -->
 <div class="form-box">
 
 <form method="GET">
 
-<select name="id_locataire">
+<select name="id_locataire" required>
 
 <option value="">👤 Choisir un locataire</option>
 
 <?php
 $resL = $conn->query("SELECT * FROM locataire");
 while($l = $resL->fetch_assoc()){
-echo "<option value='{$l['id_locataire']}'>{$l['nom']} {$l['postnom']} {$l['prenom']}</option>";
+    $selected = ($id_locataire == $l['id_locataire']) ? 'selected' : '';
+    echo "<option value='{$l['id_locataire']}' {$selected}>{$l['nom']} {$l['postnom']} {$l['prenom']}</option>";
 }
 ?>
 
 </select>
 
-<button type="submit">🔎 Voir</button>
+<button type="submit">🔎 Voir le rapport du locataire</button>
 
 </form>
 
@@ -265,17 +356,17 @@ echo "<option value='{$l['id_locataire']}'>{$l['nom']} {$l['postnom']} {$l['pren
 
 <div class="locataire-section">
 
-<button class="print-btn" onclick="printLocataire()">🖨 imprimer Locataire</button>
+<button class="print-btn" onclick="printLocataire()">🖨 Imprimer Locataire</button>
 
-<button class="print-btn" onclick="closeReport()">❌ Fermer</button>
+<button class="print-btn btn-close-report" onclick="closeReport()">❌ Fermer le rapport</button>
 
 <div class="report-box">
 
 <p><b>Nom :</b> <?= $rapport['nom'] ?> <?= $rapport['postnom'] ?> <?= $rapport['prenom'] ?></p>
-<p><b>Maison :</b> <?= $rapport['adresse'] ?> - <?= $rapport['quartier'] ?></p>
-<p><b>Appartement :</b> <?= $rapport['numero_appartement'] ?></p>
-<p><b>Loyer :</b> <?= $rapport['loyer'] ?> $</p>
-<p><b>Total payé :</b> <?= $total_paye ?> $</p>
+<p><b>Maison :</b> <?= $rapport['adresse'] ?? 'Non assignée' ?> - <?= $rapport['quartier'] ?? '' ?></p>
+<p><b>Appartement :</b> <?= $rapport['numero_appartement'] ?? 'Non assigné' ?></p>
+<p><b>Loyer :</b> <?= number_format($rapport['loyer'] ?? 0, 2) ?> $</p>
+<p><b>Total payé :</b> <?= number_format($total_paye, 2) ?> $</p>
 
 <p><b>Statut :</b>
 <span class="<?= ($statut=='OK')?'ok':'no' ?>">
@@ -287,7 +378,7 @@ echo "<option value='{$l['id_locataire']}'>{$l['nom']} {$l['postnom']} {$l['pren
 
 <div class="table-box">
 
-<h3>💰 Paiements</h3>
+<h3>💰 Historique des Paiements</h3>
 
 <table>
 <tr>
@@ -296,13 +387,17 @@ echo "<option value='{$l['id_locataire']}'>{$l['nom']} {$l['postnom']} {$l['pren
 <th>Date</th>
 </tr>
 
-<?php foreach($paiements as $p): ?>
-<tr>
-<td><?= $p['mois'] ?></td>
-<td><?= $p['montant'] ?> $</td>
-<td><?= $p['date_paiement'] ?></td>
-</tr>
-<?php endforeach; ?>
+<?php if(count($paiements) > 0): ?>
+    <?php foreach($paiements as $p): ?>
+    <tr>
+    <td><?= htmlspecialchars($p['mois']) ?></td>
+    <td><?= number_format($p['montant'], 2) ?> $</td>
+    <td><?= htmlspecialchars($p['date_paiement']) ?></td>
+    </tr>
+    <?php endforeach; ?>
+<?php else: ?>
+    <tr><td colspan="3">Aucun paiement enregistré pour ce locataire</td></tr>
+<?php endif; ?>
 
 </table>
 
@@ -326,8 +421,7 @@ function printLocataire(){
 }
 
 function closeReport(){
-    document.querySelector(".locataire-section").style.display = "none";
-    document.querySelector("select[name='id_locataire']").value = "";
+    window.location.href = "rapport.php";
 }
 </script>
 

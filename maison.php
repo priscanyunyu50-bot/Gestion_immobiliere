@@ -173,6 +173,29 @@ body::before{
     z-index:-1;
 }
 
+/* ===== BOUTON RETOUR ===== */
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 15px;
+    transition: 0.3s ease;
+    margin-bottom: 20px;
+}
+
+.btn-back:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateX(-4px);
+}
+
 h1{
 
     text-align:center;
@@ -353,6 +376,13 @@ tr:hover td{
 </head>
 
 <body>
+
+<!-- Bouton Retour Dynamic -->
+<?php if($modifier): ?>
+    <a href="maison.php" class="btn-back">⬅ Annuler la modification</a>
+<?php else: ?>
+    <a href="dashboard.php" class="btn-back">⬅ Retour au tableau de bord</a>
+<?php endif; ?>
 
 <h1> Gestion des Maisons</h1>
 

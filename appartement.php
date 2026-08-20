@@ -243,13 +243,52 @@ body::before{
     z-index:-1;
 }
 
+.top-bar{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    margin-bottom:30px;
+}
+
+.btn-retour{
+
+    padding:12px 20px;
+
+    border-radius:12px;
+
+    background:rgba(255,255,255,0.12);
+
+    backdrop-filter:blur(10px);
+
+    border:1px solid rgba(255,255,255,0.2);
+
+    color:white;
+
+    text-decoration:none;
+
+    font-weight:bold;
+
+    transition:0.3s;
+}
+
+.btn-retour:hover{
+
+    background:rgba(255,255,255,0.25);
+
+    transform:translateX(-3px);
+}
+
 h1{
 
     text-align:center;
 
-    margin-bottom:30px;
+    font-size:36px;
 
-    font-size:40px;
+    flex:1;
 }
 
 .form-box{
@@ -415,6 +454,15 @@ tr:hover td{
 
 @media(max-width:900px){
 
+    .top-bar{
+
+        flex-direction:column;
+
+        gap:15px;
+
+        text-align:center;
+    }
+
     .form-box{
         width:100%;
     }
@@ -426,7 +474,17 @@ tr:hover td{
 
 <body>
 
+<div class="top-bar">
+
+<a href="dashboard.php" class="btn-retour">
+⬅ Retour au Dashboard
+</a>
+
 <h1>Gestion des Appartements</h1>
+
+<div style="width:180px;"></div>
+
+</div>
 
 <div class="form-box">
 

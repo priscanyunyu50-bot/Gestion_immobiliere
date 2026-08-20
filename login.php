@@ -4,47 +4,46 @@ include 'connexion.php';
 
 $error = "";
 
-if(isset($_POST['login'])){
+if (isset($_POST['login'])) {
 
     $username = trim($_POST['username']);
     $motdepasse = trim($_POST['motdepasse']);
 
-    $stmt = $conn->prepare("
-        SELECT * FROM utilisateurs
-        WHERE username=?
-    ");
+    // Correction 1 & 2 : Table 'utilisateur' et colonne 'nom_utilisateur'
+    $stmt = $conn->prepare("SELECT * FROM utilisateur WHERE nom_utilisateur = ?");
 
-    $stmt->bind_param("s", $username);
+    if ($stmt) {
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+        $res = $stmt->get_result();
 
-    $stmt->execute();
+        if ($res && $res->num_rows > 0) {
 
-    $res = $stmt->get_result();
+            $user = $res->fetch_assoc();
 
-    if($res->num_rows > 0){
+            // Récupération du mot de passe en base (nom de colonne : mot_de_passe ou motdepasse)
+            $hash_base = $user['mot_de_passe'] ?? $user['motdepasse'] ?? '';
 
-        $user = $res->fetch_assoc();
+            // Correction 3 : Vérification hybride (mot de passe haché OU texte clair)
+            if (password_verify($motdepasse, $hash_base) || $motdepasse === $hash_base) {
 
-        if($motdepasse == $user['motdepasse']){
+                $_SESSION['id_utilisateur'] = $user['id_utilisateur'];
+                $_SESSION['username'] = $user['nom_utilisateur'] ?? $user['username'];
+                $_SESSION['role'] = $user['role'];
 
-            $_SESSION['id_utilisateur'] = $user['id_utilisateur'];
-            $_SESSION['username'] = $user['username'];
-            $_SESSION['role'] = $user['role'];
+                header("Location: dashboard.php");
+                exit();
 
-            header("Location: dashboard.php");
-            exit();
+            } else {
+                $error = "Mot de passe incorrect";
+            }
 
-        }else{
-
-            $error = "Mot de passe incorrect";
-
+        } else {
+            $error = "Utilisateur introuvable";
         }
-
-    }else{
-
-        $error = "Utilisateur introuvable";
-
+    } else {
+        $error = "Erreur SQL : " . $conn->error;
     }
-
 }
 ?>
 
@@ -58,13 +57,13 @@ if(isset($_POST['login'])){
 
 <style>
 
-*{
+* {
     margin:0;
     padding:0;
     box-sizing:border-box;
 }
 
-body{
+body {
     height:100vh;
     display:flex;
     justify-content:center;
@@ -77,131 +76,85 @@ body{
     no-repeat center center/cover;
 }
 
-body::before{
+body::before {
     content:"";
     position:fixed;
     inset:0;
     backdrop-filter:blur(8px);
 }
 
-.login-box{
-
+.login-box {
     position:relative;
-
     width:380px;
-
     padding:35px;
-
     border-radius:25px;
-
     background:rgba(255,255,255,0.08);
-
     backdrop-filter:blur(18px);
-
     border:1px solid rgba(255,255,255,0.12);
-
     box-shadow:0 8px 32px rgba(0,0,0,0.25);
-
     color:white;
-
     z-index:1;
 }
 
-.login-box h1{
-
+.login-box h1 {
     text-align:center;
-
     margin-bottom:25px;
-
     font-size:34px;
 }
 
-input{
-
+input {
     width:100%;
-
     padding:15px;
-
     margin-top:15px;
-
     border:none;
-
     border-radius:15px;
-
     outline:none;
-
     background:rgba(255,255,255,0.12);
-
     color:white;
-
     font-size:15px;
 }
 
-input::placeholder{
+input::placeholder {
     color:#ddd;
 }
 
-button{
-
+button {
     width:100%;
-
     padding:15px;
-
     margin-top:20px;
-
     border:none;
-
     border-radius:15px;
-
     background:linear-gradient(45deg,#4facfe,#6a5af9);
-
     color:white;
-
     font-size:16px;
-
     font-weight:bold;
-
     cursor:pointer;
-
     transition:0.3s;
 }
 
-button:hover{
-
+button:hover {
     transform:scale(1.03);
-
     box-shadow:0 0 20px rgba(106,90,249,0.5);
 }
 
-.error{
-
+.error {
     margin-top:15px;
-
     padding:12px;
-
     border-radius:12px;
-
     background:rgba(255,0,0,0.2);
-
     text-align:center;
-
     color:#ffb3b3;
 }
 
-.show-pass{
-
+.show-pass {
     margin-top:10px;
-
     display:flex;
-
     align-items:center;
-
     gap:8px;
-
     font-size:14px;
 }
 
-.show-pass input{
+.show-pass input {
     width:auto;
 }
 
@@ -212,7 +165,7 @@ button:hover{
 
 <div class="login-box">
 
-<h1>🏢 ImmoPro</h1>
+<h1>🏢 jonas's apartment</h1>
 
 <form method="POST">
 
